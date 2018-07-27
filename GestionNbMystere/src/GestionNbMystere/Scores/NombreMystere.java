@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.jasper.tagplugins.jstl.core.Out;
 
 /**
  * Servlet implementation class NombreMystère
@@ -37,53 +36,74 @@ public class NombreMystere extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		//on récupère la session active
 		HttpSession session  = request.getSession();
-		String log = session.getAttribute("log").toString();
-		int score = Integer.parseInt(session.getAttribute("count").toString());
+		GestionScores gs = new GestionScores();
+		String log = new String();
+		
+		if(session.getAttribute("log") != null) {
+			log = session.getAttribute("log").toString();			
+		}
+		else {
+			session.setAttribute("log", log);
+		}
+		
+		if(session.getAttribute("nombre") == null) {
+			session.setAttribute("nombre",gs);
+		}
+		else {
+			gs = (GestionScores) session.getAttribute("nombre");
+		}
+		
+		//On teste la proposition non nulle
 		if(request.getParameter("proposition") != null) {
-			int nombre = Integer.parseInt(session.getAttribute("nombre").toString());
-			int essai = Integer.parseInt(request.getParameter("proposition"));
-			if((boolean) session.getAttribute("win") == true ){
+			int nombre = gs.getMystere().get(gs.getMystere().size()-1);							
+			int essai = -1;
+			try {
+			 essai = Integer.parseInt(request.getParameter("proposition"));
 			}
+			catch(NumberFormatException e) {
+				RequestDispatcher rd = request.getRequestDispatcher("jeu.jsp");
+				rd.forward(request, response);
+			}
+			// si le booleen win est vrai, on a gagné et on ne fait plus rien.
+			if((Boolean) session.getAttribute("win")){}
+			// sinon on déroule l'algo;
 			else {
 				try {
-					score++;
-					session.setAttribute("count",score);
-					if(nombre == essai){
-						session.setAttribute("win", true);
-						session.setAttribute("status", "win");
-						log = GenerationNombreMystere.bonNombre();
-						session.setAttribute("log", log);
-						if (session.getAttribute("highscore") != null ) {
-							if((boolean) session.getAttribute("win")) {
-									if(Integer.parseInt(session.getAttribute("highscore").toString()) > Integer.parseInt(session.getAttribute("count").toString())) {
-										session.setAttribute("highscore", session.getAttribute("count"));
-									}
-								}
-							}
-							else {
-								session.setAttribute("highscore", score);
-							}
-					}
-					else if (nombre > essai) {
+					gs.addCoup(essai);
+					session.setAttribute("nombre", gs);
+					//si on a le bon nombre
+					if(essai < 0 || essai > 100) {
 						session.setAttribute("win", false);
-						session.setAttribute("status", "grand");
-						log += "  " + GenerationNombreMystere.tropGrand();
+						log += "  <li class='alert alert-danger'> Mauvais nombre rentré</li>";
 						session.setAttribute("log", log);
 					}
-					else if (nombre < essai) {
-						session.setAttribute("win", false);
-						session.setAttribute("status", "petit");
-						log += "  " + GenerationNombreMystere.tropPetit();
-						session.setAttribute("log", log);
-						
+					else {
+						if(nombre == essai){							
+							session.setAttribute("win", true);			
+							log = "<li class='alert alert-success'>Bravo, vous avez trouvé le nombre mystère<li>";
+							session.setAttribute("log", log);
+							int coups = gs.getCoups().size();
+							gs.addSolve(coups);
+						}
+						//si on a un essai plus petit que le nombre mystère
+						else if (nombre > essai) {
+							session.setAttribute("win", false);
+							log += "  <li class='alert alert-warning'>Le nombre mystère est plus grand que " + essai +"</li>";
+							session.setAttribute("log", log);
+						}
+						//si on a un essai plus grand que le nombre mystère
+						else if (nombre < essai) {
+							session.setAttribute("win", false);
+							log += "  <li class='alert alert-warning'>Le nombre mystère est plus petit que " + essai +"</li>";
+							session.setAttribute("log", log);
+						}						
 					}
 				}
-				catch(NumberFormatException e) {
+				catch(Exception e) {
 					System.out.println(e);
 				}
-				
 			}
 			RequestDispatcher rd = request.getRequestDispatcher("jeu.jsp");
 			rd.forward(request, response);

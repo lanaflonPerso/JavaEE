@@ -1,6 +1,7 @@
 package GestionNbMystere.Scores;
 
 import java.io.IOException;
+import java.util.Random;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -31,11 +32,20 @@ public class NouveauNombreMystere extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
-		GenerationNombreMystere.setNombre();
+		GestionScores gs = new GestionScores();
+		Random rnd = new Random();
+		int val = rnd.nextInt(100)+1;
+		if(session.getAttribute("nombre") == null) {
+			session.setAttribute("nombre", gs);
+		}
+		else {
+			gs = (GestionScores) session.getAttribute("nombre");
+		}
 		session.setAttribute("win", false);
-		session.setAttribute("nombre", GenerationNombreMystere.getNombre());
 		session.setAttribute("log", "");
-		session.setAttribute("count", 0);
+		gs.addMystere(val);
+		gs.getCoups().clear();
+		session.setAttribute("nombre", gs);
 		RequestDispatcher rd = request.getRequestDispatcher("jeu.jsp");
 		rd.forward(request, response);
 	}

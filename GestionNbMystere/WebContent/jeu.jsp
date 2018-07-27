@@ -1,4 +1,5 @@
-<%@page import="GestionNbMystere.Scores.GenerationNombreMystere"%>
+<%@page import="GestionNbMystere.Scores.GestionScores"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <jsp:include page="JSP/bandeau.jsp"></jsp:include>
@@ -9,7 +10,10 @@
 		<h3>Donner un chiffre entre 0 et 100 </h3>
 	</div>
 <%
-	out.print(session.getAttribute("nombre"));
+	if(session.getAttribute("nombre") != null){
+		GestionScores gs = (GestionScores) session.getAttribute("nombre");
+		out.print(gs.getMystere().toString());
+	}
 	%>
 	<div class="saisie">
 		<form method="post" action="./Nombre" class="form-group">
@@ -23,30 +27,62 @@
 			<input class="btn" type="submit" name="rejouer" value="Nouvelle Partie">
 		</form>
 	</div>
-	<div class="affichage">
-		<div id="listeCoups">
-			<ul><% 
-			if(session.getAttribute("log") != null){
-				String[] log = session.getAttribute("log").toString().split("  ");
-				for(String s : log){
-					out.print(s);				
-				}				
-			}
-		%>
-			</ul>
-		</div>
-		<div>
+
+	<div id="listeCoups">
+		<ul><% 
+		if(session.getAttribute("log") != null){
+			String[] log = session.getAttribute("log").toString().split("  ");
+			for(String s : log){
+				out.print(s);				
+			}				
+		}
+	%>
+		</ul>
+	</div>
+	<div id="scores">
+		<div id="actuel">
 			<h3>Score</h3>
-			<p> <% out.print(session.getAttribute("count")); %> </p>
+			<% 
+			if(session.getAttribute("nombre") != null) {
+				if(session.getAttribute("win") != null){
+					GestionScores tempGs = (GestionScores) session.getAttribute("nombre");
+					if((boolean) session.getAttribute("win") == true){
+						out.print("<p class='alert alert-success'>" + tempGs.getCoups().size() +  " </p>");
+					}
+					else{
+						out.print("<p>" + tempGs.getCoups().size() + " </p>");
+					}
+				}
+			 }
+			else{
+				out.print("0");
+			}
+				%> 
+		</div>
+		<div id="meilleur">
 			<h3> Meilleur score</h3>
 			<p><% 
-			if(session.getAttribute("highscore") != null){
-				out.print(session.getAttribute("highscore")); 
+				if(session.getAttribute("nombre") != null){
+					GestionScores gs = (GestionScores) session.getAttribute("nombre");
+					if(gs.getSolve().size() > 0){
+						out.print(gs.getSolve().stream().mapToInt(x -> x).min().getAsInt());
+					}
+				}
+			%></p>		
+		</div>
+		<div id="historique">
+			<h3>Historique des coups</h3>
+			<% if(session.getAttribute("nombre") != null){
+				GestionScores gs = (GestionScores) session.getAttribute("nombre");
+				if(gs.getCoups().size() > 0){
+					for(int i : gs.getCoups()){
+						out.print("<span>"+ i +" </span>");											
+					}
+				}
+				else{}
 			}
-			else{
-				out.print("Pas encore de meilleur score");
-			}
-			%></p>
+				
+				%>
 		</div>
 	</div>
 </div>

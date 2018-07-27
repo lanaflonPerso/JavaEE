@@ -5,6 +5,4 @@
 <form method="post" action="./nouveauNombre">
 	<input type="submit" name="jouer" value="Jouer au jeu">
 </form>
-
-
 <jsp:include page="JSP/pied.jsp"></jsp:include>
