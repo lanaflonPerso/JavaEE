@@ -1,7 +1,6 @@
-package GestionNbMystere.Scores;
+package GestionNbMystere.Identification;
 
 import java.io.IOException;
-import java.util.Random;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,16 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class NouveauNombreMystere
+ * Servlet implementation class IdentLoginDeco
  */
-@WebServlet("/nouveauNombre")
-public class NouveauNombreMystere extends HttpServlet {
+@WebServlet("/Deconnexion")
+public class IdentLoginDeco extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public NouveauNombreMystere() {
+    public IdentLoginDeco() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,30 +30,23 @@ public class NouveauNombreMystere extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		HttpSession session = request.getSession();
-		GestionScores gs = new GestionScores();
-		Random rnd = new Random();
-		int val = rnd.nextInt(100)+1;
-		if(session.getAttribute("nombre") == null) {
-			session.setAttribute("nombre", gs);
-		}
-		else {
-			gs = (GestionScores) session.getAttribute("nombre");
-		}
-		session.setAttribute("jeuTermine", false);
-		session.setAttribute("log", "");
-		gs.addMystere(val);
-		gs.getCoups().clear();
-		session.setAttribute("nombre", gs);
-		RequestDispatcher rd = request.getRequestDispatcher("jeu.jsp");
-		rd.forward(request, response);
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		HttpSession session = request.getSession();
+		if(request.getParameter("deco") != null) {
+			session.setAttribute("login", false);
+			session.invalidate();
+			RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+			rd.forward(request,response);
+		}
+		else {
+			
+		}
 	}
 
 }

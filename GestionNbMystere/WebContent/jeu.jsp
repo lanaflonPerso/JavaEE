@@ -8,23 +8,21 @@
 <div class="wrapper">
 	<div class="titre">
 		<h3>Donner un chiffre entre 0 et 100 </h3>
-	</div>
-<%
+		<form method="post" action="./Deconnexion">
+			<input id="deco" type="submit" name="deco" value="déconnexion">
+		</form>
+	</div><!-- 
+ <%
 	if(session.getAttribute("nombre") != null){
 		GestionScores gs = (GestionScores) session.getAttribute("nombre");
 		out.print(gs.getMystere().toString());
 	}
-	%>
+	%> -->
 	<div class="saisie">
 		<form method="post" action="./Nombre" class="form-group">
 			<label class="" for="proposition">Saisie du chiffre</label>
 			<input class="form-control" type ="number" name="proposition" id="proposition" required/>
-			<input class="btn" type="submit" name="proposer" value="Jouer"/>
-		</form>
-	</div>
-	<div class="results">
-		<form method="post" action="./nouveauNombre">
-			<input class="btn" type="submit" name="rejouer" value="Nouvelle Partie">
+			<input class="btn" type="submit" id="jouer" name="proposer" value="Jouer"/>
 		</form>
 	</div>
 
@@ -44,18 +42,18 @@
 			<h3>Score</h3>
 			<% 
 			if(session.getAttribute("nombre") != null) {
-				if(session.getAttribute("win") != null){
+				if(session.getAttribute("jeuTermine") != null){
 					GestionScores tempGs = (GestionScores) session.getAttribute("nombre");
-					if((boolean) session.getAttribute("win") == true){
-						out.print("<p class='alert alert-success'>" + tempGs.getCoups().size() +  " </p>");
+					if((boolean) session.getAttribute("jeuTermine") == true){
+						out.print("<p id='score' class='alert alert-success'>" + tempGs.getCoups().size() +  "</p>");
 					}
 					else{
-						out.print("<p>" + tempGs.getCoups().size() + " </p>");
+						out.print("<p id='score'>" + tempGs.getCoups().size() + " </p>");
 					}
 				}
 			 }
 			else{
-				out.print("0");
+				out.print("<p id='score'>0</p>");
 			}
 				%> 
 		</div>
@@ -65,7 +63,7 @@
 				if(session.getAttribute("nombre") != null){
 					GestionScores gs = (GestionScores) session.getAttribute("nombre");
 					if(gs.getSolve().size() > 0){
-						out.print(gs.getSolve().stream().mapToInt(x -> x).min().getAsInt());
+						out.print("<p id='best'>" + gs.getSolve().stream().mapToInt(x -> x).min().getAsInt() + "</p>");
 					}
 				}
 			%></p>		
@@ -80,10 +78,14 @@
 					}
 				}
 				else{}
-			}
-				
-				%>
+			}%>
+			
 		</div>
+	</div>
+	<div class="new">
+		<form method="post" action="./nouveauNombre">
+			<input class="btn" type="submit" name="rejouer" value="Nouvelle Partie">
+		</form>
 	</div>
 </div>
 <jsp:include page="JSP/pied.jsp"></jsp:include>

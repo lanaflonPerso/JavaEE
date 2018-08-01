@@ -66,8 +66,13 @@ public class NombreMystere extends HttpServlet {
 				RequestDispatcher rd = request.getRequestDispatcher("jeu.jsp");
 				rd.forward(request, response);
 			}
-			// si le booleen win est vrai, on a gagné et on ne fait plus rien.
-			if((Boolean) session.getAttribute("win")){}
+			// si le booleen jeuTermine est vrai, on a gagné ou trop nul et on ne fait plus rien.
+			if((Boolean) session.getAttribute("jeuTermine")){}
+			else if(gs.getCoups().size() > 26) {
+				log = "<li class='alert alert-danger'> Vous êtes trop nul vous ne meritez pas de continuer à jouer</li>";
+				session.setAttribute("log", log);
+				session.setAttribute("jeuTermine", true);
+			}
 			// sinon on déroule l'algo;
 			else {
 				try {
@@ -75,13 +80,13 @@ public class NombreMystere extends HttpServlet {
 					session.setAttribute("nombre", gs);
 					//si on a le bon nombre
 					if(essai < 0 || essai > 100) {
-						session.setAttribute("win", false);
+						session.setAttribute("jeuTermine", false);
 						log += "  <li class='alert alert-danger'> Mauvais nombre rentré</li>";
 						session.setAttribute("log", log);
 					}
 					else {
 						if(nombre == essai){							
-							session.setAttribute("win", true);			
+							session.setAttribute("jeuTermine", true);			
 							log = "<li class='alert alert-success'>Bravo, vous avez trouvé le nombre mystère<li>";
 							session.setAttribute("log", log);
 							int coups = gs.getCoups().size();
@@ -89,13 +94,13 @@ public class NombreMystere extends HttpServlet {
 						}
 						//si on a un essai plus petit que le nombre mystère
 						else if (nombre > essai) {
-							session.setAttribute("win", false);
+							session.setAttribute("jeuTermine", false);
 							log += "  <li class='alert alert-warning'>Le nombre mystère est plus grand que " + essai +"</li>";
 							session.setAttribute("log", log);
 						}
 						//si on a un essai plus grand que le nombre mystère
 						else if (nombre < essai) {
-							session.setAttribute("win", false);
+							session.setAttribute("jeuTermine", false);
 							log += "  <li class='alert alert-warning'>Le nombre mystère est plus petit que " + essai +"</li>";
 							session.setAttribute("log", log);
 						}						
