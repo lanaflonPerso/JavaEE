@@ -1,5 +1,6 @@
 package com.baptiste.web.controller;
 
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,23 @@ public class SupprimerListeCoursesController {
 	public String afficher(final ModelMap pModel) {
 		final List<Course> lListeCourses = service.rechercherCourses();
 		pModel.addAttribute("listeCourses", lListeCourses);
-		return "suppression";
+		if (pModel.get("modification") == null) {
+			final ModificationForm lModificationForm = new ModificationForm();
+			final List<ModificationCourse> lListe = new LinkedList<ModificationCourse>();
+			for (final Course lCourse : lListeCourses) {
+				final ModificationCourse lModificationCourse = new ModificationCourse();
+				lModificationCourse.setId(lCourse.getId());
+				lModificationCourse.setLibelle(lCourse.getLibelle());
+				lModificationCourse.setQuantite(lCourse.getQuantite().toString());
+				lListe.add(lModificationCourse);
+			}
+			lModificationForm.setListeCourses(lListe);
+			pModel.addAttribute("modification", lModificationForm);
+		}
+		if (pModel.get("creation") == null) {
+			pModel.addAttribute("creation", new CreationForm());
+		}
+		return "modification";
 	}
 	
 	@RequestMapping(value="/supprimerSuppressionListeCourses",method = RequestMethod.GET)	

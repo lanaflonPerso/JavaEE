@@ -7,6 +7,8 @@ pageEncoding="ISO-8859-1"%>
 <html>
 	<head>
 		<title><spring:message code="titre.listecourses"/></title>
+		<spring:url value="/resources/style.css" var="stylecss" />
+		<link href="${stylecss}" rel="stylesheet" />
 	</head>
 	<body>
 		<table border="1">

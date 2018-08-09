@@ -14,39 +14,64 @@ prefix="form"%>
 		<link href="${stylecss}" rel="stylesheet" />
 	</head>
 	<body>
-		<form:form method="post" modelAttribute="modification"
-		action="modifierModificationListeCourses">
-		<table border="1">
+		<form:form method="post" modelAttribute="creation" action="creerCreationListeCourses">
+			<div id="crea-wrapper">
+			<div class="creation">
+			<spring:message code="creation.elementcourses.libelle.libelle" />
+			<form:input path="libelle"/>
+			<b><i><form:errors path="libelle" cssclass="error"/></i></b><br>
+			</div>
+			<div class="creation">
+			<spring:message code="creation.elementcourses.libelle.quantite"/>
+			<form:input path="quantite"/>
+			<b><i><form:errors path="quantite" cssclass="error"/></i></b><br>
+			</div>
+			</div>
+			<div id="divsubmit">
+			<input id="submit" type="submit" value="Ajouter course"/>
+		</div>
+		</form:form>
+		<form:form method="post" modelAttribute="modification" action="modifierModificationListeCourses">
+		<table>
 			<thead>
 				<tr>
-					<th><spring:message code="colonne.identifiant"/></th>
+					<%--<th><spring:message code="colonne.identifiant"/></th> --%>
 					<th><spring:message code="colonne.libelle"/></th>
 					<th><spring:message code="colonne.quantite"/></th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody id="body">
 				<c:forEach items="${modification.listeCourses}" var="course"
 				varStatus="status">
-				<tr>
-					<td><c:out value="${course.id}"/>
-					<input type="hidden" name="listeCourses[${status.index}].id"
-					value="${course.id}"/></td>
-					<td><c:out value="${course.libelle}"/>
-					<input type="hidden"
-					name="listeCourses[${status.index}].libelle"
-					value="${course.libelle}"/></td>
-					<td><input type="text"
-					name="listeCourses[${status.index}].quantite"
-					value="${course.quantite}"/><br/>
-					<b><i><form:errors path="listeCourses[${status.index}].quantite" /></i></b></td>
-				</tr>
+					<tr>
+					<%--
+						<td>
+							<c:out value="${course.id}"/>
+							<input type="hidden" name="listeCourses[${status.index}].id" value="${course.id}"/>
+						</td> --%>
+						<td>
+							<c:out value="${course.libelle}"/>
+							<input type="hidden" name="listeCourses[${status.index}].libelle" value="${course.libelle}"/>
+						</td>
+						<td>
+							<input type="text" name="listeCourses[${status.index}].quantite" value="${course.quantite}"/><br/>
+							<b><i><form:errors path="listeCourses[${status.index}].quantite" /></i></b>
+						</td>
+						<td>
+						<c:url value="/supprimerSuppressionListeCourses" var="url">
+								<c:param name="idCourse" value="${course.id}"/>
+							</c:url>
+							<a class="supr" href="${url}">
+								<spring:message code="suppression.supprimer.libelle" />
+							</a>
+						</td>
+					</tr>
 				</c:forEach>
-				<tr>
-				</tr>
 			</tbody>
 		</table>
 		<div id="divsubmit">
-			<input id="submit" type="submit"/>
+			<input id="submit" type="submit" value="Modifier la liste"/>
 		</div>
 		</form:form>
 	</body>

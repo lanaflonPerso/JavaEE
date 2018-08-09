@@ -33,6 +33,9 @@ public class ModifierListeCoursesController {
 			lModificationForm.setListeCourses(lListe);
 			pModel.addAttribute("modification", lModificationForm);
 		}
+		if (pModel.get("creation") == null) {
+			pModel.addAttribute("creation", new CreationForm());
+		}
 		return "modification";
 	}
 	
